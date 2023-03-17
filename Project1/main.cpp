@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #define TEST 0
 
 #include <stdio.h>
@@ -7,17 +9,44 @@
 int main()
 {
 	serial_connect("\\\\.\\COM10"); //connect to the comport, you must add \\\\.\\ in front of the name.
-	float data[6] = { 0 };
+	float data[6] = { 0 }; //the container to save the six-dimension data from the force sensor
 
 	#if !TEST
-		while (wacoh_isConnected)
+		FILE* fpt; //file pointer
+		unsigned int x_value = 0;
+		const int size = 100;
+		int x[size] = { 0 };
+		double y[size] = { 0 };
+
+		while (1)
 		{
-			WacohRead(data);
-			printf("Fz:%.2f\n",
-				-data[2] + 0.2);
+			for (int i = 0; i < (size - 1); i++) //move each entry one index ahead
+			{
+				x[i] = x[i + 1];
+				y[i] = y[i + 1];
+			}
+			WacohRead(data); //get the data
+			x[size - 1] = x_value++; //fill the last entry in x
+			y[size - 1] = data[2]; //fill the last entry in y
+
+			if (x_value > (size * 100)) //make sure x_vaule won't overflow
+			{
+				x_value = 0;
+			}
+
+			fpt = fopen("data.csv", "w"); //open and point to the file
+			fprintf(fpt, "x_value,y_value\n"); //write in the file
+			for (int i = 0; i < size; i++)
+			{
+				fprintf(fpt, "%d, %.2f\n", x[i], y[i]);
+				printf("%d, %.2f", x[i], y[i]);
+				printf("\n");
+			}
+
+			fclose(fpt);
 
 			Sleep(100);
-		}
+}
 	#endif
 
 	#if TEST
