@@ -26,8 +26,12 @@ int main()
 				y[i] = y[i + 1];
 			}
 			WacohRead(data); //get the data
+			if (data[2] > 10) //discard the large error
+			{
+				continue;
+			}
 			x[size - 1] = x_value++; //fill the last entry in x
-			y[size - 1] = data[2]; //fill the last entry in y
+			y[size - 1] = - (data[2] - 9.4); //fill the last entry in y
 
 			if (x_value > (size * 100)) //make sure x_vaule won't overflow
 			{
@@ -38,8 +42,8 @@ int main()
 			fprintf(fpt, "x_value,y_value\n"); //write in the file
 			for (int i = 0; i < size; i++)
 			{
-				fprintf(fpt, "%d, %.2f\n", x[i], y[i]);
-				printf("%d, %.2f", x[i], y[i]);
+				fprintf(fpt, "%d, %.1f\n", x[i], y[i]);
+				printf("%d, %.1f", x[i], y[i]);
 				printf("\n");
 			}
 
