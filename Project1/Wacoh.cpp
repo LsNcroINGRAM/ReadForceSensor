@@ -6,15 +6,15 @@
 #include <iostream>
 #include "Wacoh.h"
 
-using namespace std;
-
 HANDLE COM;
 bool wacoh_isConnected = false;
 string serialPortList[10];
 
-int  force_ori[6] = { 0 };
-int  force_tmp[6] = { 8192, 8192, 8192, 8192, 8192, 8192 };
-float  force_senstv[6] = { 32.800, 32.815, 32.835, 1653.801, 1634.816, 1636.136 };
+//int force_tmp[6] = { 8192, 8192, 8192, 8192, 8192, 8192 };
+int force_tmp[6] = { 8370, 8217, 8009, 8087, 8153, 8385 };
+
+//float force_senstv[6] = { 32.800, 32.815, 32.835, 1653.801, 1634.816, 1636.136 };
+float force_senstv[6] = { 32.800, 32.815, 33.447, 1653.801, 1634.816, 1636.136 };
 
 // Serial Communication
 int serial_connect(string com_num)
@@ -62,7 +62,7 @@ int serial_connect(string com_num)
 	return 1;
 }
 
-// Read force sensor WACOH:
+// Read force sensor WACOH
 void WacohRead(float force_tmpp[6])
 {
 	DWORD n = 0;
@@ -72,6 +72,7 @@ void WacohRead(float force_tmpp[6])
 	ReadFile(COM, str, 27, &n, 0);
 	str[n] = 0;
 	int tmp;
+	int force_ori[6] = { 0 };
 
 	if (n >= 27)
 	{
@@ -89,10 +90,9 @@ void WacohRead(float force_tmpp[6])
 
 	for (int i = 0; i < 6; i++)
 	{
-		force_tmpp[i] = float(force_ori[i] - force_tmp[i]) / force_senstv[i];
+		force_tmpp[i] = (force_ori[i] - force_tmp[i]) / force_senstv[i];
+		//force_tmpp[i] = float(force_ori[i]); //for test
 	}
-	//printf("%d,%d,%d,%d,%d,%d,%d\n", tmp, force_ori[0], force_ori[1], force_ori[2], force_ori[3], force_ori[4], force_ori[5]);
-	//printf("Force Read: %.3f  %.3f  %.3f  %.3f  %.3f  %.3f\n", force_tmpp[0], force_tmpp[1], force_tmpp[2], force_tmpp[3], force_tmpp[4], force_tmpp[5]);
 }
 
 void serial_close()
