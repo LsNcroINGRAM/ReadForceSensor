@@ -10,12 +10,6 @@ HANDLE COM;
 bool wacoh_isConnected = false;
 string serialPortList[10];
 
-//int force_tmp[6] = { 8192, 8192, 8192, 8192, 8192, 8192 };
-int force_tmp[6] = { 8370, 8217, 8009, 8087, 8153, 8385 };
-
-//float force_senstv[6] = { 32.800, 32.815, 32.835, 1653.801, 1634.816, 1636.136 };
-float force_senstv[6] = { 32.800, 32.815, 33.447, 1653.801, 1634.816, 1636.136 };
-
 // Serial Communication
 int serial_connect(string com_num)
 {
@@ -72,7 +66,13 @@ void WacohRead(float force_tmpp[6])
 	ReadFile(COM, str, 27, &n, 0);
 	str[n] = 0;
 	int tmp;
+
 	int force_ori[6] = { 0 };
+	//int force_tmp[6] = { 8192, 8192, 8192, 8192, 8192, 8192 };
+	int force_tmp[6] = { 8370, 8217, 8014, 8087, 8153, 8385 };
+
+	//float force_senstv[6] = { 32.800, 32.815, 32.835, 1653.801, 1634.816, 1636.136 };
+	float force_senstv[6] = { 32.800, 32.815, 30.686, 1653.801, 1634.816, 1636.136 };
 
 	if (n >= 27)
 	{
@@ -91,7 +91,8 @@ void WacohRead(float force_tmpp[6])
 	for (int i = 0; i < 6; i++)
 	{
 		force_tmpp[i] = (force_ori[i] - force_tmp[i]) / force_senstv[i];
-		//force_tmpp[i] = float(force_ori[i]); //for test
+		//force_tmpp[i] = force_ori[i] - force_tmp[i]; //for testing force_senstv
+		//force_tmpp[i] = force_ori[i]; //for testing force_ori
 	}
 }
 
