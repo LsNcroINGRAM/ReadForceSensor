@@ -15,6 +15,7 @@ int force_tmp[6] = { 8370, 8217, 8009, 8087, 8153, 8385 };
 
 //float force_senstv[6] = { 32.800, 32.815, 32.835, 1653.801, 1634.816, 1636.136 };
 float force_senstv[6] = { 32.800, 32.815, 33.447, 1653.801, 1634.816, 1636.136 };
+////////////////////////////////
 
 // Serial Communication
 int serial_connect(string com_num)
