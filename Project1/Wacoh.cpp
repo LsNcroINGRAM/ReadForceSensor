@@ -11,7 +11,7 @@ bool wacoh_isConnected = false;
 string serialPortList[10];
 
 // Read force sensor WACOH
-void WacohRead(float force_tmpp[6])
+void WacohRead(float force_tmp[6])
 {
 	DWORD n = 0;
 	char str[128];
@@ -21,16 +21,15 @@ void WacohRead(float force_tmpp[6])
 	str[n] = 0;
 	int tmp;
 
-	int force_ori[6] = { 0 };
-	//int force_tmp[6] = { 8192, 8192, 8192, 8192, 8192, 8192 };
-	int force_tmp[6] = { 8370, 8217, 8014, 8087, 8153, 8385 };
+	int forceLoad[6] = { 0 };
+	int forceNoLoad[6] = { 8333, 8235, 8111, 8079, 8170, 8424 }; //raw data at zero point
 
-	//float force_senstv[6] = { 32.800, 32.815, 32.835, 1653.801, 1634.816, 1636.136 };
-	float force_senstv[6] = { 32.800, 32.815, 30.686, 1653.801, 1634.816, 1636.136 };
+	//float forceSenstv[6] = { 32.800, 32.815, 32.835, 1653.801, 1634.816, 1636.136 };
+	float forceSenstv[6] = { 32.800, 32.815, 30.686, 1653.801, 1634.816, 1636.136 };
 
 	if (n >= 27)
 	{
-		sscanf(str, "%1d%4hx%4hx%4hx%4hx%4hx%4hx", &tmp, &force_ori[0], &force_ori[1], &force_ori[2], &force_ori[3], &force_ori[4], &force_ori[5]);
+		sscanf(str, "%1d%4hx%4hx%4hx%4hx%4hx%4hx", &tmp, &forceLoad[0], &forceLoad[1], &forceLoad[2], &forceLoad[3], &forceLoad[4], &forceLoad[5]);
 	}
 	else
 	{
@@ -39,14 +38,13 @@ void WacohRead(float force_tmpp[6])
 		n += nn;
 		str[n] = 0;
 		if (nn >= 27)
-			sscanf(str, "%1d%4hx%4hx%4hx%4hx%4hx%4hx", &tmp, &force_ori[0], &force_ori[1], &force_ori[2], &force_ori[3], &force_ori[4], &force_ori[5]);
+			sscanf(str, "%1d%4hx%4hx%4hx%4hx%4hx%4hx", &tmp, &forceLoad[0], &forceLoad[1], &forceLoad[2], &forceLoad[3], &forceLoad[4], &forceLoad[5]);
 	}
 
 	for (int i = 0; i < 6; i++)
 	{
-		force_tmpp[i] = (force_ori[i] - force_tmp[i]) / force_senstv[i];
-		//force_tmpp[i] = force_ori[i] - force_tmp[i]; //for testing force_senstv
-		//force_tmpp[i] = force_ori[i]; //for testing force_ori
+		//force_tmp[i] = (forceLoad[i] - forceNoLoad[i]) / forceSenstv[i];
+		force_tmp[i] = forceLoad[i];
 	}
 }
 
