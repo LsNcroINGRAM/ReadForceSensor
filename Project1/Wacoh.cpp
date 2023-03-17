@@ -22,10 +22,8 @@ void WacohRead(float force_tmp[6])
 	int tmp;
 
 	int forceLoad[6] = { 0 };
-	int forceNoLoad[6] = { 8333, 8235, 8111, 8079, 8170, 8424 }; //raw data at zero point
-
-	//float forceSenstv[6] = { 32.800, 32.815, 32.835, 1653.801, 1634.816, 1636.136 };
-	float forceSenstv[6] = { 32.800, 32.815, 30.686, 1653.801, 1634.816, 1636.136 };
+	int forceNoLoad[6] = { 8342, 8230, 8055, 8134, 8192, 8436 }; //raw data at zero point
+	float forceSenstv[6] = { 32, 32, 29.455, 1635, 1635, 1635 }; //sensitive factor
 
 	if (n >= 27)
 	{
@@ -43,8 +41,9 @@ void WacohRead(float force_tmp[6])
 
 	for (int i = 0; i < 6; i++)
 	{
-		//force_tmp[i] = (forceLoad[i] - forceNoLoad[i]) / forceSenstv[i];
-		force_tmp[i] = forceLoad[i];
+		force_tmp[i] = (forceLoad[i] - forceNoLoad[i]) / forceSenstv[i];
+		//force_tmp[i] = forceLoad[i];
+		//force_tmp[i] = (forceLoad[i] - forceNoLoad[i]);
 	}
 }
 

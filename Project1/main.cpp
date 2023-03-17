@@ -13,11 +13,8 @@ int main()
 		while (wacoh_isConnected)
 		{
 			WacohRead(data);
-			//printf("Fx:%.2f	Fy:%.2f	Fz:%.2f	Mx:%.2f	My:%.2f	Mz:%.2f\n",
-				//data[0], data[1], data[2], data[3], data[4], data[5]);
-
 			printf("Fz:%.2f\n",
-				data[2]);
+				-data[2] + 0.2);
 
 			Sleep(100);
 		}
@@ -26,7 +23,7 @@ int main()
 	#if TEST
 		float sum[6] = { 0 };
 		int count = 0;
-		int times = 3000;
+		int times = 500;
 		while (wacoh_isConnected && count < times)
 		{
 			WacohRead(data);	
