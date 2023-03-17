@@ -10,6 +10,46 @@ HANDLE COM;
 bool wacoh_isConnected = false;
 string serialPortList[10];
 
+// Read force sensor WACOH
+void WacohRead(float force_tmpp[6])
+{
+	DWORD n = 0;
+	char str[128];
+	WriteFile(COM, "R", 1, &n, 0);
+	Sleep(1);
+	ReadFile(COM, str, 27, &n, 0);
+	str[n] = 0;
+	int tmp;
+
+	int force_ori[6] = { 0 };
+	//int force_tmp[6] = { 8192, 8192, 8192, 8192, 8192, 8192 };
+	int force_tmp[6] = { 8370, 8217, 8014, 8087, 8153, 8385 };
+
+	//float force_senstv[6] = { 32.800, 32.815, 32.835, 1653.801, 1634.816, 1636.136 };
+	float force_senstv[6] = { 32.800, 32.815, 30.686, 1653.801, 1634.816, 1636.136 };
+
+	if (n >= 27)
+	{
+		sscanf(str, "%1d%4hx%4hx%4hx%4hx%4hx%4hx", &tmp, &force_ori[0], &force_ori[1], &force_ori[2], &force_ori[3], &force_ori[4], &force_ori[5]);
+	}
+	else
+	{
+		DWORD nn;
+		ReadFile(COM, str + n, 27, &nn, 0);
+		n += nn;
+		str[n] = 0;
+		if (nn >= 27)
+			sscanf(str, "%1d%4hx%4hx%4hx%4hx%4hx%4hx", &tmp, &force_ori[0], &force_ori[1], &force_ori[2], &force_ori[3], &force_ori[4], &force_ori[5]);
+	}
+
+	for (int i = 0; i < 6; i++)
+	{
+		force_tmpp[i] = (force_ori[i] - force_tmp[i]) / force_senstv[i];
+		//force_tmpp[i] = force_ori[i] - force_tmp[i]; //for testing force_senstv
+		//force_tmpp[i] = force_ori[i]; //for testing force_ori
+	}
+}
+
 // Serial Communication
 int serial_connect(string com_num)
 {
@@ -54,46 +94,6 @@ int serial_connect(string com_num)
 	wacoh_isConnected = true;
 	printf("> Serial Comm success... \n");
 	return 1;
-}
-
-// Read force sensor WACOH
-void WacohRead(float force_tmpp[6])
-{
-	DWORD n = 0;
-	char str[128];
-	WriteFile(COM, "R", 1, &n, 0);
-	Sleep(1);
-	ReadFile(COM, str, 27, &n, 0);
-	str[n] = 0;
-	int tmp;
-
-	int force_ori[6] = { 0 };
-	//int force_tmp[6] = { 8192, 8192, 8192, 8192, 8192, 8192 };
-	int force_tmp[6] = { 8370, 8217, 8014, 8087, 8153, 8385 };
-
-	//float force_senstv[6] = { 32.800, 32.815, 32.835, 1653.801, 1634.816, 1636.136 };
-	float force_senstv[6] = { 32.800, 32.815, 30.686, 1653.801, 1634.816, 1636.136 };
-
-	if (n >= 27)
-	{
-		sscanf(str, "%1d%4hx%4hx%4hx%4hx%4hx%4hx", &tmp, &force_ori[0], &force_ori[1], &force_ori[2], &force_ori[3], &force_ori[4], &force_ori[5]);
-	}
-	else
-	{
-		DWORD nn;
-		ReadFile(COM, str + n, 27, &nn, 0);
-		n += nn;
-		str[n] = 0;
-		if (nn >= 27)
-			sscanf(str, "%1d%4hx%4hx%4hx%4hx%4hx%4hx", &tmp, &force_ori[0], &force_ori[1], &force_ori[2], &force_ori[3], &force_ori[4], &force_ori[5]);
-	}
-
-	for (int i = 0; i < 6; i++)
-	{
-		force_tmpp[i] = (force_ori[i] - force_tmp[i]) / force_senstv[i];
-		//force_tmpp[i] = force_ori[i] - force_tmp[i]; //for testing force_senstv
-		//force_tmpp[i] = force_ori[i]; //for testing force_ori
-	}
 }
 
 void serial_close()
