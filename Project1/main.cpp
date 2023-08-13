@@ -4,8 +4,9 @@
 #define VCM_MODELING 0
 
 #include <stdio.h>
-#include "Wacoh.h"
 #include <windows.h>
+#include <time.h>
+#include "Wacoh.h"
 
 int main()
 {
@@ -14,44 +15,50 @@ int main()
 
 	#if !TEST && !VCM_MODELING
 		FILE* fpt; //file pointer
-		unsigned int x_value = 0;
-		const int size = 100;
-		int x[size] = { 0 };
+		double x_value = 0;
+		const int size = 200;
+		double x[size] = { 0 };
 		double y[size] = { 0 };
+		double timeTaken = 0;
+		clock_t t;
 
 		while (1)
 		{
+			t = clock();
+
+			x_value += timeTaken;
+
 			for (int i = 0; i < (size - 1); i++) //move each entry one index ahead
 			{
 				x[i] = x[i + 1];
 				y[i] = y[i + 1];
 			}
-			WacohRead(data); //get the data
-			if (data[2] > 100) //discard the large error
-			{
-				break;
-			}
-			x[size - 1] = x_value++; //fill the last entry in x
-			y[size - 1] = 4 - data[2]; //fill the last entry in y
 
+			WacohRead(data); //get the data
+
+			x[size - 1] = x_value; //fill the last entry in x
+			y[size - 1] = 3.7 - data[2]; //fill the last entry in y
+			/*
 			if (x_value > (size * 100)) //make sure x_vaule won't overflow
 			{
 				x_value = 0;
 			}
-
+			*/
 			fpt = fopen("data.csv", "w"); //open and point to the file
 			fprintf(fpt, "x_value,y_value\n"); //write in the file
 			for (int i = 0; i < size; i++)
 			{
-				fprintf(fpt, "%d, %.1f\n", x[i], y[i]);
-				printf("%d, %.1f", x[i], y[i]);
+				fprintf(fpt, "%.2f, %.2f\n", x[i], y[i]);
+				printf("%.2f, %.2f", x[i], y[i]);
 				printf("\n");
 			}
-
 			fclose(fpt);
+			
+			Sleep(3);
 
-			Sleep(20);
-}
+			t = clock() - t;
+			timeTaken = ((double)t) / CLOCKS_PER_SEC; // in seconds
+		}
 	#endif
 
 	#if TEST && !VCM_MODELING
