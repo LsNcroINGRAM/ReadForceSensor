@@ -89,7 +89,7 @@ int serial_connect(string com_num)
 	}
 
 	wacoh_isConnected = true;
-	printf("> Serial Comm success... \n");
+	printf("> Serial Communication success... \n");
 	return 1;
 }
 

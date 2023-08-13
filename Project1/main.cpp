@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #define TEST 0
-#define VCM_MODELING 1
+#define VCM_MODELING 0
 
 #include <stdio.h>
 #include "Wacoh.h"
@@ -9,7 +9,7 @@
 
 int main()
 {
-	serial_connect("\\\\.\\COM10"); //connect to the comport, you must add \\\\.\\ in front of the name.
+	serial_connect("\\\\.\\COM9"); //connect to the comport, you must add \\\\.\\ in front of the name.
 	float data[6] = { 0 }; //the container to save the six-dimension data from the force sensor
 
 	#if !TEST && !VCM_MODELING
@@ -32,7 +32,7 @@ int main()
 				break;
 			}
 			x[size - 1] = x_value++; //fill the last entry in x
-			y[size - 1] = 4.7 - data[2]; //fill the last entry in y
+			y[size - 1] = 4 - data[2]; //fill the last entry in y
 
 			if (x_value > (size * 100)) //make sure x_vaule won't overflow
 			{
@@ -82,7 +82,7 @@ int main()
 			{
 				continue;
 			}
-			total = total + 4.79 - data[2];
+			total = total + 3.4 - data[2];
 			count++;
 		}
 		ans = total / count;
